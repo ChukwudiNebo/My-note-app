@@ -41,35 +41,48 @@ const Note = (e) => {
   };
 
   const deleteNote = (index) => {
-    const removeItemFromArray = notes.filter((element,i)=>index!==i)
-    setNotes(removeItemFromArray)
+    const removeItemFromArray = notes.filter((element, i) => index !== i);
+    setNotes(removeItemFromArray);
   };
 
   return (
     <>
-      <div>
-        <h3>Type your notes here</h3>
-        <div>
-          <textarea
-            name="textarea"
-            id={textarea.id}
-            cols={30}
-            rows={10}
-            value={textarea.note}
-            onChange={(e) => onChange(e)}
-          />
+      <div className="note">
+        <div className="note__header">
+          <h3>Type your notes here</h3>
+          <p>Your notes are safe here</p>
         </div>
-        <div>
+        <div className="d-flex flex-wrap justify-content-center note__section">
+          <form action="">
+            <div>
+              <div className="">
+                <input type="text" placeholder="Title of Notes" />
+              </div>
+              <div className="">
+                <textarea
+                  name="textarea"
+                  id={textarea.id}
+                  cols={30}
+                  rows={10}
+                  value={textarea.note}
+                  onChange={(e) => onChange(e)}
+                />
+              </div>
+            </div>
+          </form>
           <div>
-            <button
-              type="submit"
-              className="btn btn-primary mt-4"
-              onClick={onClick}
-            >
-              Save
-            </button>
+            <div>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                onClick={onClick}
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
+        {/*  */}
         <div>
           <div>
             {notes.map((item, index) => (
