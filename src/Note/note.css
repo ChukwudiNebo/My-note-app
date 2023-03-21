@@ -30,9 +30,11 @@
   input {
     width: 300px;
     border: 1px solid blue;
+    border-bottom: none;
     box-shadow: 0px 0px 10px rgba(245, 245, 245, 0.457);
     padding: 5px;
     padding-left: 10px;
+    padding-right: 10px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
   }
@@ -44,8 +46,11 @@
   }
 
   textarea {
+    padding-top: 20px;
     padding-left: 10px;
+    padding-right: 10px;
     width: 300px;
+    border-top: 1px solid #77777730;
     box-shadow: 0px 0px 10px rgba(245, 245, 245, 0.457);
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -57,6 +62,7 @@
     width: 300px;
     margin-left: auto;
     margin-right: auto;
+    font-weight: bold;
   }
 }
 @media screen and (min-width: 576px) {
