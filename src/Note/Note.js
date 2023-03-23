@@ -1,20 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import FileSaver from "file-saver";
 import "./note.css";
 
 const Note = (e) => {
+  const [searchTerm, setSearchTerm] = useState([]);
   const [notes, setNotes] = useState([]);
   const random = Math.random();
+  // const [title, setTitle] = useState({});
   const [textarea, setTextarea] = useState({
     id: random,
-    note: "",
+    title: "",
+    text: "",
   });
 
+  const { id, title, text } = textarea;
   const onChange = (e) => {
-    setTextarea({ id: textarea.id, note: e.target.value });
+    setTextarea({
+      ...textarea,
+      id: textarea.id,
+      [e.target.name]: e.target.value,
+    });
   };
-
   const onClick = () => {
-    if (!textarea.note) {
+    if (!text && !title) {
       console.log("empty");
     } else {
       //   const obj = notes.find((element) => element.id === textarea.id);
@@ -28,10 +36,11 @@ const Note = (e) => {
       } else {
         setNotes((prev) => [...prev, textarea]);
       }
-      setTextarea({ id: random, note: "" });
+      setTextarea({ text: "", title: "" });
     }
   };
 
+  // Edit notes
   const edit = (index) => {
     const obj = notes[index];
     setTextarea({ ...obj });
@@ -40,10 +49,31 @@ const Note = (e) => {
     // setTextarea((prev) => ({ ...prev, note: arr }));
   };
 
+  // Delete notes
   const deleteNote = (index) => {
     const removeItemFromArray = notes.filter((element, i) => index !== i);
     setNotes(removeItemFromArray);
   };
+
+  const filteredSearch = notes.filter((items) =>
+    items.title.toLowerCase().includes(searchTerm)
+  );
+
+  useEffect(() => {
+    localStorage.setItem("notes", JSON.stringify(notes));
+  }, [notes]);
+  const storedNotes = JSON.parse(localStorage.getItem("notes"));
+  useEffect(() => {
+    if (storedNotes) {
+      setNotes(storedNotes);
+    }
+  }, []);
+
+  const saveArrayToTextFile =()=>{
+    // console.log(notes)
+    const file = new Blob([JSON.stringify(notes,null,2)],{type:'text/plain;charset=utf-8'});
+    FileSaver.saveAs(file,'notes.txt')
+  }
 
   return (
     <>
@@ -53,24 +83,29 @@ const Note = (e) => {
           <p>Your notes are safe here</p>
         </div>
         <div className="d-flex flex-wrap justify-content-center note__section">
-          <form action="">
+          <form className="">
             <div>
               <div className="">
-                <input type="text" placeholder="Title of Notes" />
+                <input
+                  placeholder="Title of Note"
+                  name="title"
+                  value={textarea.title}
+                  onChange={(e) => onChange(e)}
+                />
               </div>
               <div className="">
                 <textarea
-                  name="textarea"
-                  id={textarea.id}
+                  name="text"
+                  // id={textarea.id}
                   cols={30}
                   rows={10}
-                  value={textarea.note}
+                  value={textarea.text}
                   onChange={(e) => onChange(e)}
                 />
               </div>
             </div>
           </form>
-          <div>
+          <div className="note__button">
             <div>
               <button
                 type="submit"
@@ -85,35 +120,73 @@ const Note = (e) => {
         {/*  */}
         <div>
           <div>
-            {notes.map((item, index) => (
-              <div
-                key={index}
-                className="d-flex p-3 my-2"
-                style={{
-                  border: "1px solid red",
-                  height: "200px",
-                  width: "250px",
-                }}
-              >
-                <p>{item.note}</p>
-                <div className="mx-2">
-                  <button
-                    className="btn-secondary btn"
-                    onClick={() => edit(index)}
-                  >
-                    Edit
-                  </button>
+            {notes.length && (
+              <div className="note__search-content">
+                <div>
+                  <label>Search Note</label>
                 </div>
-                <div className="mx-2">
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => deleteNote(index)}
-                  >
-                    delete
-                  </button>
+                <div>
+                  <input
+                    type="search"
+                    name=""
+                    id="note__array-searchbar"
+                    placeholder="Search Note"
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div>
+                  {!searchTerm ? (
+                    <div style={{ color: "white", fontSize: "12px" }}>
+                      No search note
+                    </div>
+                  ) : (
+                    filteredSearch.map((search, index) => (
+                      <div style={{ color: "white" }} key={index}>
+                        {search.title}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div style={{ paddingBottom: "50px" }}>
+            {notes.map((item, index) => (
+              <div key={index} className="p-3 my-2 note__array">
+                <div className="note__array-paragraph">
+                  <div className="note__array-title">
+                    <h4>{item.title}</h4>
+                  </div>
+                  <div>
+                    <p>{item.text}</p>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center justify-content-center">
+                  <div className="">
+                    <button
+                      className="btn-secondary btn"
+                      onClick={() => edit(index)}
+                    >
+                      Edit
+                    </button>
+                  </div>
+                  <div className="mx-2">
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => deleteNote(index)}
+                    >
+                      delete
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
+          </div>
+          <div>
+            <button className="btn btn-danger" onClick={saveArrayToTextFile}>
+              Save Notes as textFile
+            </button>
           </div>
         </div>
       </div>
