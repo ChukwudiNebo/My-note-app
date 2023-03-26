@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import FileSaver from "file-saver";
+// import FileSaver from "file-saver";
 import "./note.css";
 
 const Note = (e) => {
@@ -62,18 +62,48 @@ const Note = (e) => {
   useEffect(() => {
     localStorage.setItem("notes", JSON.stringify(notes));
   }, [notes]);
+
   const storedNotes = JSON.parse(localStorage.getItem("notes"));
+
   useEffect(() => {
     if (storedNotes) {
       setNotes(storedNotes);
     }
   }, []);
 
-  const saveArrayToTextFile =()=>{
-    // console.log(notes)
-    const file = new Blob([JSON.stringify(notes,null,2)],{type:'text/plain;charset=utf-8'});
-    FileSaver.saveAs(file,'notes.txt')
-  }
+  const fileName = "note.txt";
+  const saveArrayToTextFile = (txt, fileName) => {
+    if (!txt) {
+      console.log("nothing found");
+      return;
+    }
+
+    const arrayToStrings = txt.map((obj) => JSON.stringify(obj));
+    // console.log(arrayToStrings);
+
+    // Convert the array to String
+    const arrayToString = arrayToStrings.join("\n");
+
+    // Create a blob object from the string
+    const blob = new Blob([arrayToStrings], { type: "text/plain" });
+
+    // Create a url for the blob object
+    const url = URL.createObjectURL(blob);
+    // create a link and click it to download the file
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    //Clean up the URL object
+    URL.revokeObjectURL(url);
+  };
+
+  // saveArrayToTextFile(notes, fileName);
+  // const saveArrayToTextFile =()=>{
+  //   // console.log(notes)
+  //   const file = new Blob([JSON.stringify(notes,null,2)],{type:'text/plain;charset=utf-8'});
+  //   FileSaver.saveAs(file,'notes.txt')
+  // }
 
   return (
     <>
@@ -184,7 +214,10 @@ const Note = (e) => {
             ))}
           </div>
           <div>
-            <button className="btn btn-danger" onClick={saveArrayToTextFile}>
+            <button
+              className="btn btn-danger"
+              onClick={() => saveArrayToTextFile(notes, fileName)}
+            >
               Save Notes as textFile
             </button>
           </div>
