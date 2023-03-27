@@ -22,6 +22,7 @@ const Note = (e) => {
     });
   };
   const onClick = () => {
+    // console.log(notes)
     if (!text && !title) {
       console.log("empty");
     } else {
@@ -36,7 +37,7 @@ const Note = (e) => {
       } else {
         setNotes((prev) => [...prev, textarea]);
       }
-      setTextarea({ text: "", title: "" });
+      setTextarea({ id:random,text: "", title: "" });
     }
   };
 
